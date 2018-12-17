@@ -23,10 +23,16 @@ namespace AWSLambda.StreamTest
 
             foreach (var record in dynamoEvent.Records)
             {
+
+                dynamic image = record.Dynamodb.NewImage;
+
+
                 context.Logger.LogLine($"Event ID: {record.EventID}");
                 context.Logger.LogLine($"Event Name: {record.EventName}");
 
-                string streamRecordJson = SerializeStreamRecord(record.Dynamodb);
+                context.Logger.LogLine($"id:{image.id.S}");
+
+                string streamRecordJson = SerializeStreamRecord(record);
                 context.Logger.LogLine($"DynamoDB Record:");
                 context.Logger.LogLine(streamRecordJson );
             }
@@ -34,7 +40,7 @@ namespace AWSLambda.StreamTest
             context.Logger.LogLine("Stream processing complete.");
         }
 
-        private string SerializeStreamRecord(StreamRecord streamRecord)
+        private string SerializeStreamRecord(object streamRecord)
         {
             using (var writer = new StringWriter())
             {
